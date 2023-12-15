@@ -47,36 +47,25 @@ def calculate_iou(box1, box2):
 def match_boxes(file_yolo, file_seat):
     yolo_boxes = read_bounding_boxes(file_yolo)
     seat_boxes = read_bounding_boxes(file_seat)
+    matched_seat_boxes = set()  # 이미 매치된 seat_box 인덱스를 저장
 
     matches = []
     for i, yolo_box in enumerate(yolo_boxes):
-        best_match = (-1, 0)  # (index, IoU)
+        best_match = (-1, float('inf'))  # (index, distance)
         for j, seat_box in enumerate(seat_boxes):
             iou = calculate_iou(yolo_box, seat_box)
 
-            if iou > best_match[1]:  # Update if a better IoU is found
-                best_match = (j, iou)
-
-        if best_match[1] > 0:  # If there's an overlap
-            # Find the closest box using Euclidean distance
-            closest_distance = float('inf')
-            closest_seat_box_index = -1
-            for j, seat_box in enumerate(seat_boxes):
+            # IoU가 0이 아니고, 해당 seat_box가 아직 매치되지 않았다면
+            if iou > 0 and j not in matched_seat_boxes:
                 distance = calculate_distance(yolo_box, seat_box)
+                if distance < best_match[1]:  # 더 가까운 seat_box를 찾으면 업데이트
+                    best_match = (j, distance)
 
-                if distance < closest_distance:
-                    closest_distance = distance
-                    closest_seat_box_index = j
-
-            matches.append((i, closest_seat_box_index))
-        else:  # If no overlap, find the closest box based on Euclidean distance
-            closest_distance = float('inf')
-            closest_seat_box_index = -1
-            for j, seat_box in enumerate(seat_boxes):
-                distance = calculate_distance(yolo_box, seat_box)
-                if distance < closest_distance:
-                    closest_distance = distance
-                    closest_seat_box_index = j
-            matches.append((i, closest_seat_box_index))
+        # 매치된 seat_box가 있다면, matched_seat_boxes에 추가
+        if best_match[0] != -1:
+            matched_seat_boxes.add(best_match[0])
+            matches.append((i, best_match[0]))
+        else:  # 매치되지 않은 경우
+            matches.append((i, None))
 
     return matches

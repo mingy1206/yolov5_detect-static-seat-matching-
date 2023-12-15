@@ -1,9 +1,0 @@
-train: ../4000train_data/images/train  # train images (relative to 'path') 128 images
-val: ../4000train_data/images/val  # val images (relative to 'path') 128 images
-test:  # test images (optional)
-
-# Classes
-names:
-  0: person
-  1: labtop
-
