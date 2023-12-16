@@ -4,6 +4,7 @@ import shutil
 from pathlib import Path
 from calculate import match_boxes
 
+##기존 이미지와 라벨링 데이터 제거
 def clear_directory(directory):
     if directory.exists() and directory.is_dir():
         shutil.rmtree(directory)
@@ -26,10 +27,10 @@ def run_yolov5_detection():
     ]
     subprocess.run(command)
 
-    # 'seat.txt' 파일의 경로
+    # seat.txt 경로
     file_seat = 'seat.txt'
 
-    # txt_dir 내의 모든 텍스트 파일에 대해 반복
+    # txt_dir 내의 모든 파일에 대해서 실행
     for file_path in txt_dir.glob('*.txt'):
         matches = match_boxes(file_path, file_seat)
         print(f"Matches for {file_path.name}: {matches}")

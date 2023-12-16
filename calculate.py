@@ -20,10 +20,10 @@ def convert_box_format(box):
 
 
 
-# Calculate Euclidean distance between two boxes
+# IoU의 예외사항일때 euclidean distance로 계산
 def calculate_distance(box1, box2):
     return math.sqrt((box1[0] - box2[0]) ** 2 + (box1[1] - box2[1]) ** 2)
-# Calculate Intersection over Union (IoU) for two boxes
+# IoU계산
 def calculate_iou(box1, box2):
     box1 = convert_box_format(box1)
     box2 = convert_box_format(box2)
@@ -43,7 +43,7 @@ def calculate_iou(box1, box2):
     iou = inter_area / float(box1_area + box2_area - inter_area)
     return iou
 
-# Match YOLO detected boxes with seat boxes
+# detect한 box와 라벨링한 seat.txt의 박스를 비교
 def match_boxes(file_yolo, file_seat):
     yolo_boxes = read_bounding_boxes(file_yolo)
     seat_boxes = read_bounding_boxes(file_seat)
